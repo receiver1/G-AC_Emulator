@@ -1,6 +1,8 @@
 
 #include <windows.h>
+#include <chrono>
 
+#include "samp.hpp"
 #include "myget.hpp"
 
 unsigned long baseAddress;
@@ -9,32 +11,48 @@ bool whileAlive;
 
 std::string generateGuid()
 {
+	srand(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 	std::string template_ = "AAAAAAAA-AAAA-AA-AAAA-AAAAAAAA-AAAA-AAAA-AAAAAAAA";
 	for (auto& i : template_)
 	{
 		if (i == 'A')
 		{
 			i = char('a' + rand() % ('z' - 'a'));
-			srand(i);
 		}
 	}
 	return template_;
 }
 
+const char* getPlayerName()
+{
+	if (pSAMP->pPools->pPlayer == NULL)
+		return NULL;
+
+	if (pSAMP->pPools->pPlayer->iLocalPlayerNameAllocated <= 0xF)
+		return pSAMP->pPools->pPlayer->szLocalPlayerName;
+
+	return pSAMP->pPools->pPlayer->pszLocalPlayerName;
+}
+
+bool isInitializated()
+{
+	baseAddress = reinterpret_cast<unsigned long>(LoadLibrary("samp.dll"));
+	if (!baseAddress)
+		return false;
+
+	pSAMP = *reinterpret_cast<stSAMP**>(baseAddress + 0x21A0F8);
+	if (!pSAMP)
+		return false;
+
+	return true;
+}
+
 void main_thread()
 {
-	do {
-		baseAddress = reinterpret_cast<unsigned long>(LoadLibrary("samp.dll"));
-	} while (!baseAddress);
-
-	HKEY rKey;
-	char Reget[256] = { 0 };
-	DWORD RegetPath = sizeof(Reget);
-	RegOpenKeyEx(HKEY_CURRENT_USER, "\SOFTWARE\\SAMP", NULL, KEY_QUERY_VALUE, &rKey);
-	RegQueryValueEx(rKey, "PlayerName", NULL, NULL, (LPBYTE)&Reget, &RegetPath);
+	while (!isInitializated()) { Sleep(100); }
 
 	std::string guid = generateGuid();
-	std::string nick = Reget;
+	std::string nick = getPlayerName();
 
 	std::string query = "/check.php", buffer;
 	query += "?N=" + nick;
