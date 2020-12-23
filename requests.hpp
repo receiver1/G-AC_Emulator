@@ -8,12 +8,11 @@
 
 class cRequests
 {
+    HINTERNET hIntSession;
+    HINTERNET hHttpSession;
+    HINTERNET hHttpRequest;
 public:
     void init(const char* site, const char* agent);
     void end();
     std::string send(const char* Url);
-private:
-    HINTERNET hIntSession;
-    HINTERNET hHttpSession;
-    HINTERNET hHttpRequest;
 };

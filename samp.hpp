@@ -688,7 +688,7 @@ struct stChatInfo {
 	int										iChatWindowMode;
 	unsigned char									bTimestamps;
 	unsigned int								iLogFileExist;
-	char									logFilePathChatLog[MAX_PATH + 1];
+	char									logFilePathChatLog[261];
 	void* pGameUI; // CDXUTDialog
 	void* pEditBackground; // CDXUTEditBox
 	void* pDXUTScrollBar;
