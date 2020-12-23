@@ -163,7 +163,7 @@ struct stTextDrawTransmit {
 	union
 	{
 		unsigned char								byteFlags;
-		struct
+		struct stProperties
 		{
 			unsigned char							byteBox : 1;
 			unsigned char							byteLeft : 1;
@@ -214,8 +214,8 @@ struct stTextdraw {
 	float									fX;
 	float									fY;
 	unsigned char									unk[8];
-	unsigned int								unsigned long99B;	// -1 by default
-	unsigned int								unsigned long99F;	// -1 by default
+	unsigned int								long99B;	// -1 by default
+	unsigned int								long99F;	// -1 by default
 	unsigned int								index;		// -1 if bad
 	unsigned char									byte9A7;	// = 1; 0 by default
 	unsigned short								sModel;
@@ -225,15 +225,15 @@ struct stTextdraw {
 	unsigned char									f9BE;
 	unsigned char									byte9BF;
 	unsigned char									byte9C0;
-	unsigned int								unsigned long9C1;
-	unsigned int								unsigned long9C5;
-	unsigned int								unsigned long9C9;
-	unsigned int								unsigned long9CD;
+	unsigned int								long9C1;
+	unsigned int								long9C5;
+	unsigned int								long9C9;
+	unsigned int								long9CD;
 	unsigned char									byte9D1;
-	unsigned int								unsigned long9D2;
+	unsigned int								long9D2;
 };
 
-struct  stTextdrawPool {
+struct stTextdrawPool {
 	int										iIsListed[SAMP_MAX_TEXTDRAWS];
 	int										iPlayerTextDraw[SAMP_MAX_PLAYERTEXTDRAWS];
 	struct stTextdraw* textdraw[SAMP_MAX_TEXTDRAWS];
@@ -247,7 +247,7 @@ struct stPickup {
 	float									fPosition[3];
 };
 
-struct  stPickupPool {
+struct stPickupPool {
 	int										iPickupsCount;
 	unsigned int								ul_GTA_PickupID[SAMP_MAX_PICKUPS];
 	int										iPickupID[SAMP_MAX_PICKUPS];
@@ -257,7 +257,7 @@ struct  stPickupPool {
 
 };
 
-struct  stPlayerPool {
+struct stPlayerPool {
 	unsigned int								ulMaxPlayerID;
 	unsigned short								sLocalPlayerID;
 	void* pVTBL_txtHandler;
@@ -435,7 +435,7 @@ struct stHeadSync {
 	int										iHeadSyncLookTick;
 };
 
-struct  stLocalPlayer {
+struct stLocalPlayer {
 	struct stSAMPPed* pSAMP_Actor;
 	unsigned short								sCurrentAnimID;
 	unsigned short								sAnimFlags;
@@ -585,7 +585,7 @@ struct stSAMPPed {
 	int										isUrinating;
 };
 
-struct  stVehiclePool {
+struct stVehiclePool {
 	int										iVehicleCount;
 	void* pUnk0;
 	unsigned char									byteSpace1[0x112C];
@@ -628,7 +628,7 @@ struct stObject : public stSAMPEntity < struct object_info > {
 	float									fRot[3];
 };
 
-struct  stObjectPool {
+struct stObjectPool {
 	int										iObjectCount;
 	int										iIsListed[SAMP_MAX_OBJECTS];
 	struct stObject* object[SAMP_MAX_OBJECTS];
@@ -655,7 +655,7 @@ struct stTextLabel {
 	unsigned short								sAttachedToVehicleID;
 };
 
-struct  stTextLabelPool {
+struct stTextLabelPool {
 	struct stTextLabel						textLabel[SAMP_MAX_3DTEXTS];
 	int										iIsListed[SAMP_MAX_3DTEXTS];
 
@@ -682,7 +682,7 @@ struct stFontRenderer {
 	char* m_pszTextBuffer;
 };
 
-struct  stChatInfo {
+struct stChatInfo {
 	int										pagesize;
 	void* pUnk;
 	int										iChatWindowMode;
@@ -757,7 +757,7 @@ struct stKillInfo {
 	struct ID3DXFont* pAuxFont2;
 };
 
-struct  stDialogInfo {
+struct stDialogInfo {
 	void* pVTBL;
 	int										iTextPoxX;
 	int										iTextPoxY;
@@ -823,7 +823,7 @@ struct stMiscInfo {
 	unsigned char									byteVehicleModels[212];
 };
 
-struct  stScoreboardInfo {
+struct stScoreboardInfo {
 	int										iIsEnabled;
 	int										iPlayersCount;
 	float									fTextOffsetX;

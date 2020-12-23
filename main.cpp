@@ -1,17 +1,20 @@
 
 #include <windows.h>
-#include <chrono>
+#include <ctime>
+#include <thread>
 
 #include "samp.hpp"
-#include "myget.hpp"
+#include "requests.hpp"
 
 unsigned long baseAddress;
-struct stSAMP *pSAMP;
-bool whileAlive;
+bool needUnload;
+
+struct stSAMP* pSAMP;
+struct HINSTANCE__* hInstance;
 
 std::string generateGuid()
 {
-	srand(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+	srand(static_cast<unsigned int>(time(NULL)));
 	std::string template_ = "AAAAAAAA-AAAA-AA-AAAA-AAAAAAAA-AAAA-AAAA-AAAAAAAA";
 	for (auto& i : template_)
 	{
@@ -50,48 +53,66 @@ bool isInitializated()
 void main_thread()
 {
 	while (!isInitializated()) { Sleep(100); }
-
-	std::string guid = generateGuid();
-	std::string nick = getPlayerName();
-
-	std::string query = "/check.php", buffer;
-	query += "?N=" + nick;
-	query += "&K=" + guid;
-	query += "&V=1.0.0.5";
-	query += "&I=94.23.111.203:6666";
-
-	MyGet->Init("54.38.11.10");
-	MyGet->SendGet(query.c_str(), buffer);
-
-	whileAlive = true;
-	while (whileAlive)
+	while (pSAMP->iGameState != GAMESTATE_AWAIT_JOIN) { Sleep(100); }
+	if (strcmp(pSAMP->szIP, "94.23.111.203")) 
 	{
+		needUnload = true;
+	}
+
+	cRequests request;
+	request.init("54.38.11.10", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+
+	std::string query, buffer, guid, nick;
+	if (!needUnload)
+	{
+		guid = generateGuid();
+		nick = getPlayerName();
+
+		query = "/check.php";
+		query += "?N=" + nick;
+		query += "&K=" + guid;
+		query += "&V=1.0.0.5";
+		query += "&I=94.23.111.203:6666";
+		request.send(query.c_str());
+	}
+
+	while (true)
+	{
+		Sleep(1);
+
+		if (needUnload)
+		{
+			request.end();
+			FreeLibraryAndExitThread(hInstance, 0);
+			break;
+		}
+
 		static unsigned long tick = GetTickCount();
-		if (GetTickCount() - tick >= 20000)
+		if (GetTickCount() - tick >= 10000)
 		{
 			query = "/alive.php";
 			query += "?N=" + nick;
 			query += "&K=" + guid;
 			query += "&V=1.0.0.5";
 			query += "&I=94.23.111.203:6666";
-
-			MyGet->SendGet(query.c_str(), buffer);
+			request.send(query.c_str());
 
 			tick = GetTickCount();
 		}
 	}
+	ExitThread(0);
 }
 
-class emulator
+int __stdcall DllMain(HINSTANCE hInstDLL, DWORD fdwReason, LPVOID)
 {
-public:
-	emulator()
+	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
+		hInstance = hInstDLL;
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)main_thread, 0, 0, 0);
 	}
-	~emulator()
+	else if (fdwReason == DLL_PROCESS_DETACH)
 	{
-		whileAlive = false;
-		MyGet->DeInit();
+		needUnload = true;
 	}
-} _emulator;
+	return 1;
+}
