@@ -17,7 +17,7 @@ const char* generateGuid()
 {
 	srand(static_cast<unsigned int>(time(NULL)));
 	static char templ[50];
-	strcpy_s(templ, "AAAAAAAA-AAAA-AA-AAAA-AAAAAAAA-AAAA-AAAA-AAAAAAAA");
+	strcpy_s(templ, "XXXXXXXX-XXXX-a1-10de-d7b71e3e-XXXX-11cf-0XXXFDA8");
 	for (auto& i : templ)
 	{
 		if (i == 'A')

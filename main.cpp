@@ -52,10 +52,10 @@ void threadMain()
 			FreeLibraryAndExitThread(hInstance, 0);
 			break;
 		}
-		
+
 		request.send(query.c_str());
 
-		Sleep(10000);
+		Sleep(15000ul);
 	}
 	ExitThread(0);
 }
@@ -65,10 +65,12 @@ int __stdcall DllMain(HINSTANCE hInstDLL, DWORD fdwReason, LPVOID)
 	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
 		hInstance = hInstDLL;
-		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)threadMain, 0, 0, 0);
+		CreateThread(0, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(threadMain), 0, 0, 0);
 	}
 	else if (fdwReason == DLL_PROCESS_DETACH)
 	{
+		// Соболезную: из-за задержки в 10 секунд 
+		// цикл не успеет выполнить итерацию
 		needUnload = true;
 	}
 	return 1;
