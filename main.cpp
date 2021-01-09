@@ -55,7 +55,7 @@ void threadMain()
 
 		request.send(query.c_str());
 
-		Sleep(15000ul);
+		Sleep(5000ul);
 	}
 	ExitThread(0);
 }

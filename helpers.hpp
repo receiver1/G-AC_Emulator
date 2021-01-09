@@ -17,12 +17,17 @@ const char* generateGuid()
 {
 	srand(static_cast<unsigned int>(time(NULL)));
 	static char templ[50];
-	strcpy_s(templ, "XXXXXXXX-XXXX-a1-10de-d7b71e3e-XXXX-11cf-0XXXFDA8");
+	strcpy_s(templ, "........-....-..-....-........-....-....-0>>>FDA8");
 	for (auto& i : templ)
 	{
-		if (i == 'A')
+		bool num = ((rand() % 100) > 50);
+		if (i == '.')
 		{
-			i = char('a' + rand() % ('z' - 'a'));
+			i = num ? rand() % 9 + '0' : char('a' + rand() % ('z' - 'a'));
+		}
+		else if (i == '>')
+		{
+			i = num ? rand() % 9 + '0' : char('A' + rand() % ('A' - 'Z'));
 		}
 	}
 	return templ;
